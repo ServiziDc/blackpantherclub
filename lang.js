@@ -18,7 +18,6 @@ const LANGUAGES = [
 const T = {
 
   /* ── NAV ── */
-  nav_playlist:   { it:'Playlist Generator', en:'Playlist Generator', es:'Generador de Playlist', fr:'Générateur de Playlist', de:'Playlist Generator', ru:'Генератор Плейлиста', pl:'Generator Playlist', pt:'Gerador de Playlist', uk:'Генератор Плейлиста' },
   nav_home:       { it:'Home', en:'Home', es:'Inicio', fr:'Accueil', de:'Startseite', ru:'Главная', pl:'Strona główna', pt:'Início', uk:'Головна' },
   nav_calendar:   { it:'Calendario DJ', en:'DJ Calendar', es:'Calendario DJ', fr:'Calendrier DJ', de:'DJ Kalender', ru:'Календарь DJ', pl:'Kalendarz DJ', pt:'Calendário DJ', uk:'Календар DJ' },
   nav_gallery:    { it:'Foto / Gallery', en:'Photo / Gallery', es:'Fotos / Galería', fr:'Photos / Galerie', de:'Fotos / Galerie', ru:'Фото / Галерея', pl:'Zdjęcia / Galeria', pt:'Fotos / Galeria', uk:'Фото / Галерея' },
@@ -145,10 +144,7 @@ function tr(key, lang) {
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    // Salta elementi protetti o dentro contenitori protetti
-    if (el.closest('[data-no-i18n]') || el.hasAttribute('data-no-i18n')) return;
     const val = tr(key, lang);
-    if (!val || val === 'undefined') return;
     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
       el.placeholder = val;
     } else {
@@ -173,64 +169,31 @@ function buildLangSwitcher() {
 
   const wrapper = document.createElement('div');
   wrapper.className = 'lang-switcher';
-
-  const btn = document.createElement('button');
-  btn.className = 'lang-btn';
-  btn.id = 'lang-current';
-  btn.textContent = current.flag + ' ' + current.code.toUpperCase();
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    toggleLangMenu();
-  });
-
-  const menu = document.createElement('div');
-  menu.id = 'lang-menu';
-  menu.style.cssText = 'display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(4,3,10,.98);border:1px solid rgba(201,149,42,.25);min-width:160px;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.6);border-radius:2px;overflow:hidden;';
-
-  LANGUAGES.forEach(function(l) {
-    const opt = document.createElement('div');
-    opt.className = 'lang-option' + (l.code === lang ? ' active' : '');
-    opt.setAttribute('data-lang', l.code);
-    opt.style.cssText = 'padding:9px 16px;font-size:.82rem;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:background .15s;white-space:nowrap;';
-    opt.textContent = l.flag + ' ' + l.label;
-    opt.addEventListener('click', function(e) {
-      e.stopPropagation();
-      setLang(l.code);
-      closeLangMenu();
-    });
-    opt.addEventListener('mouseover', function() {
-      this.style.background = 'rgba(201,149,42,.12)';
-      this.style.color = '#c9952a';
-    });
-    opt.addEventListener('mouseout', function() {
-      this.style.background = '';
-      this.style.color = '';
-    });
-    menu.appendChild(opt);
-  });
-
-  wrapper.appendChild(btn);
-  wrapper.appendChild(menu);
+  wrapper.innerHTML = `
+    <button class="lang-btn" id="lang-current" onclick="toggleLangMenu(event)">
+      ${current.flag} ${current.code.toUpperCase()}
+    </button>
+    <div class="lang-menu" id="lang-menu">
+      ${LANGUAGES.map(l => `
+        <div class="lang-option ${l.code === lang ? 'active' : ''}"
+             data-lang="${l.code}"
+             onclick="setLang('${l.code}')">
+          ${l.flag} ${l.label}
+        </div>
+      `).join('')}
+    </div>
+  `;
   return wrapper;
 }
 
-function toggleLangMenu() {
-  const menu = document.getElementById('lang-menu');
-  if (!menu) return;
-  if (menu.style.display === 'none' || menu.style.display === '') {
-    menu.style.display = 'block';
-  } else {
-    menu.style.display = 'none';
-  }
+function toggleLangMenu(e) {
+  e.stopPropagation();
+  document.getElementById('lang-menu').classList.toggle('open');
 }
 
-function closeLangMenu() {
-  const menu = document.getElementById('lang-menu');
-  if (menu) menu.style.display = 'none';
-}
-
-document.addEventListener('click', function() {
-  closeLangMenu();
+document.addEventListener('click', () => {
+  const m = document.getElementById('lang-menu');
+  if (m) m.classList.remove('open');
 });
 
 function initLang() {
