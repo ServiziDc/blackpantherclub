@@ -1,116 +1,75 @@
-# 🐆 Black Panther Club - Dance Team Website
+# Gama Service – Registro Ore Lavoro
 
-Website showcasing the elite dance teams of Black Panther Club's 3DX Virtual World.
-
-## 📋 Features
-
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Interactive Cursor**: Custom animated cursor with ring effect
-- **Particle Animation**: Dynamic background particles that respond to mouse movement
-- **Smooth Animations**: Fade-in effects as you scroll
-- **Modern Styling**: Gold and blue themed dark interface with glassmorphism effects
-
-## 🎭 Dance Teams
-
-Our platform showcases 9 exceptional dance teams:
-
-1. **R|D** - Diamond-themed luxury performance team
-2. **Sun & Moon Booties** - Vibrant day and night energy
-3. **Ribbon & Bows** - Elegant pole and aerial dance specialists
-4. **The Lemaire Dancers** - Contemporary blue-themed ensemble
-5. **Sugar & Spice OT** - Heart-centered emotional performers
-6. **[ragebaiti]** - Experimental glitch-style performers
-7. **Polecats** - Silver and sophisticated pole dancers
-8. **Panthrea Euphoria** - Passionate panther-themed dance collective
-9. **Lou's Band** - Romantic heart-pulsing dance sensation
-
-## 📁 Project Structure
-
+## Struttura file
 ```
-.
-├── danceteam.html       # Main website file
-├── loghi/               # Team logos directory
-│   ├── rd.png
-│   ├── sun-moon-booties.png
-│   ├── ribbon-bows.png
-│   ├── lemaire-dancers.png
-│   ├── sugar-spice.png
-│   ├── ragebaiti.png
-│   ├── polecats.png
-│   ├── panthrea-euphoria.png
-│   └── lous-band.png
-├── lang.js              # Language support (if available)
-├── favicon.ico          # Website icon
-├── favicon.png          # Favicon PNG version
-└── README.md            # This file
+gama-service/
+├── index.html          ← Pagina login (entry point)
+├── registrati.html     ← Registrazione operai
+├── operaio.html        ← Dashboard operaio
+├── admin.html          ← Pannello amministratore
+├── setup.html          ← ⚠️ Esegui UNA VOLTA poi elimina
+├── css/
+│   └── style.css
+└── js/
+    └── firebase-config.js
 ```
 
-## 🚀 Quick Start
+## Istruzioni setup (prima volta)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/BlackPantherClub-DanceTeam.git
-   cd BlackPantherClub-DanceTeam
-   ```
+### 1. Carica su GitHub
+- Crea repository su GitHub (es. `gama-service-ore`)
+- Carica tutti i file
+- Vai su Settings → Pages → Source: `main` branch → `/root`
+- GitHub ti darà un URL tipo: `https://tuonome.github.io/gama-service-ore/`
 
-2. **Open in browser:**
-   - Simply open `danceteam.html` in your web browser
-   - Or serve via local HTTP server for best results
+### 2. Crea l'admin
+- Apri nel browser: `https://tuonome.github.io/gama-service-ore/setup.html`
+- Clicca "Crea Admin GamaService"
+- Fatto! Poi **elimina setup.html** dal repository
 
-3. **Deploy to GitHub Pages:**
-   - Push to main branch
-   - Enable GitHub Pages in repository settings
-   - Site will be live at `https://yourusername.github.io/BlackPantherClub-DanceTeam/`
+### 3. Accesso
+- **Admin** → Username: `GamaService` | Password: `GamaService@2026`
+- **Operai** → Si registrano su `registrati.html` con email e password
 
-## 🎨 Customization
+### 4. Regole Firestore (dopo il test)
+Vai su Firebase Console → Firestore → Regole e incolla:
 
-### Colors
-Edit the CSS variables in the `<style>` section:
-```css
-:root {
-  --deep:#04030a;           /* Dark background */
-  --gold:#c9952a;           /* Primary accent color */
-  --gold-light:#f0c060;     /* Light accent */
-  --blue-glow:#3b00cc;      /* Secondary accent */
-  --white:#e8e8f0;          /* Text color */
-  --panel:rgba(8,5,20,0.88) /* Card background */
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Operaio vede solo i propri dati
+    match /utenti/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /mesi/{mese} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+    // Admin vede tutti
+    match /utenti/{uid} {
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/utenti/$(request.auth.uid)).data.ruolo == 'admin';
+      match /mesi/{mese} {
+        allow read: if request.auth != null && 
+          get(/databases/$(database)/documents/utenti/$(request.auth.uid)).data.ruolo == 'admin';
+      }
+    }
+  }
 }
 ```
 
-### Adding New Teams
-1. Add the team logo to `/loghi/` folder
-2. Add a new card in the `.team-grid` section:
-```html
-<div class="team-card fade-in">
-  <img src="loghi/your-team.png" alt="Team Name">
-  <h3>Team Name</h3>
-</div>
-```
+## Come funziona
 
-## 🔧 Technologies Used
+### Operaio
+1. Si registra con nome, cognome, email, password
+2. Accede e vede il suo registro ore mensile
+3. Per ogni giorno seleziona: partenza, fine lavoro, pausa pranzo (modificabile), note
+4. Può navigare tra i mesi
+5. Può scaricare il PDF del mese
 
-- **HTML5** - Semantic markup
-- **CSS3** - Modern styling with variables and transitions
-- **JavaScript** - Interactive animations and effects
-- **Canvas API** - Particle system animation
-
-## 📱 Browser Compatibility
-
-- Chrome/Chromium (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## 📄 License
-
-All rights reserved © 2026 Black Panther Club
-
-## 📧 Contact
-
-For inquiries or collaborations, reach out through the Black Panther Club official channels.
-
----
-
-**Last Updated:** March 2026  
-**Version:** 1.1  
-**Status:** Active
+### Admin (GamaService)
+1. Accede con username `GamaService` e password
+2. Vede tutti gli operai registrati
+3. Per ogni operaio vede le ore del mese selezionato
+4. Può navigare tra i mesi
+5. Può scaricare il PDF di ogni operaio
