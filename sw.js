@@ -1,25 +1,23 @@
-const CACHE_NAME = 'gama-v3';
-const SCOPE = '/Gestione-ore-gama-service/';
+const CACHE_NAME = 'tgi-v5';
 
 const ASSETS = [
-  SCOPE,
-  SCOPE + 'index.html',
-  SCOPE + 'operaio.html',
-  SCOPE + 'admin.html',
-  SCOPE + 'carburante.html',
-  SCOPE + 'furgoni.html',
-  SCOPE + 'registrati.html',
-  SCOPE + 'recupera-password.html',
-  SCOPE + 'css/style.css',
-  SCOPE + 'js/firebase-config.js',
-  SCOPE + 'js/pwa-install.js',
-  SCOPE + 'img/logo.png',
-  SCOPE + 'img/favicon.ico',
-  SCOPE + 'img/favicon.png',
-  SCOPE + 'icon-192.png',
-  SCOPE + 'icon-512.png',
-  SCOPE + 'apple-touch-icon.png',
-  SCOPE + 'manifest.json',
+  './',
+  './index.html',
+  './operaio.html',
+  './admin.html',
+  './registrati.html',
+  './recupera-password.html',
+  './css/style.css',
+  './js/firebase-config.js',
+  './js/pwa-install.js',
+  './img/logo.png',
+  './img/logo-white.png',
+  './img/favicon.ico',
+  './img/favicon.png',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png',
+  './manifest.json',
 ];
 
 self.addEventListener('install', e => {
@@ -41,7 +39,9 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (!e.request.url.startsWith(self.location.origin + SCOPE)) return;
+  // Solo richieste GET dello stesso origine
+  if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).origin !== self.location.origin) return;
 
   e.respondWith(
     fetch(e.request)

@@ -5,247 +5,24 @@
   <link rel="icon" type="image/x-icon" href="img/favicon.ico"/>
   <link rel="icon" type="image/png" href="img/favicon.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin – Gama Service</title>
+  <title>Admin – T.G.I COMO</title>
   <link rel="stylesheet" href="css/style.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <style>
-    /* ── BUSTE PAGA MODAL ── */
-    /* ── DOCUMENTI OPERAI ── */
-    .doc-operaio-card {
-      background: rgba(255,255,255,0.7);
-      border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 10px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .doc-operaio-card:hover { border-color: var(--orange); }
-
-    .doc-operaio-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      cursor: pointer;
-      gap: 10px;
-    }
-    .doc-operaio-nome {
-      font-weight: 700;
-      font-size: 15px;
-      color: #1a1a1a;
-      flex: 1;
-    }
-    .doc-operaio-count {
-      font-size: 11px;
-      color: var(--muted);
-      background: rgba(0,0,0,0.06);
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .doc-operaio-arrow {
-      color: var(--muted);
-      font-size: 18px;
-      transition: transform 0.2s;
-    }
-    .doc-operaio-card.aperto .doc-operaio-arrow { transform: rotate(90deg); }
-
-    .doc-operaio-body {
-      display: none;
-      padding: 0 18px 16px;
-      border-top: 1px solid rgba(0,0,0,0.07);
-    }
-    .doc-operaio-card.aperto .doc-operaio-body { display: block; }
-
-    .doc-categoria-titolo {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 14px 0 8px;
-    }
-
-    .doc-file-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 8px;
-      margin-bottom: 6px;
-      transition: border-color 0.15s;
-    }
-    .doc-file-item:hover { border-color: var(--orange); }
-    .doc-file-nome {
-      flex: 1;
-      font-size: 12px;
-      color: #333;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .doc-file-btn {
-      background: none;
-      border: 1px solid rgba(255,106,0,0.4);
-      color: var(--orange);
-      padding: 4px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-    .doc-file-btn:hover { background: var(--orange-light); }
-
-    .doc-tesserino-img {
-      width: 100%;
-      max-width: 320px;
-      border-radius: 10px;
-      border: 1px solid rgba(0,0,0,0.1);
-      display: block;
-      margin: 8px 0;
-    }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      width: 100%;
-      max-width: 560px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .modal-header h3 { font-size: 16px; font-weight: 700; }
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 22px;
-      cursor: pointer;
-      line-height: 1;
-      padding: 0;
-    }
-
-    /* Upload zona */
-    .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 30px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .upload-zone:hover { border-color: var(--orange); background: rgba(255,106,0,0.04); }
-    .upload-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .upload-icon { font-size: 36px; margin-bottom: 8px; }
-    .upload-title { font-size: 14px; font-weight: 600; color: var(--text); }
-    .upload-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-    /* Lista buste */
-    .busta-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 8px;
-      gap: 10px;
-    }
-    .busta-item:hover { border-color: var(--orange-border); }
-    .busta-info { flex: 1; min-width: 0; }
-    .busta-nome { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .busta-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .busta-actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .btn-busta {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted2);
-      padding: 5px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.15s;
-    }
-    .btn-busta:hover { border-color: var(--orange); color: var(--orange); }
-    .btn-busta.danger:hover { border-color: #ff3d3d; color: #ff3d3d; }
-
-    /* Pulsante busta paga nella lista operai */
-    .btn-busta-paga {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--muted2);
-      padding: 5px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .btn-busta-paga:hover { border-color: var(--orange); color: var(--orange); }
-
-    .upload-progress {
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--muted2);
-      text-align: center;
-      display: none;
-    }
-    .upload-progress.show { display: block; }
-
-    .buste-empty {
-      text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-  </style>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
-  <meta name="theme-color" content="#ff6a00"/>
+  <meta name="theme-color" content="#30AB58"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Gama Service"/>
+  <meta name="apple-mobile-web-app-title" content="T.G.I COMO"/>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar" style="height:auto; flex-wrap:wrap; padding:10px 16px; gap:8px;">
-  <div class="topbar-logo"><img src="img/logo.png" alt="Gama Service" style="height:38px;width:auto;display:block;"/></div>
+  <div class="topbar-logo"><img src="img/logo-white.png" alt="T.G.I COMO" style="height:42px;width:auto;display:block;"/></div>
   <div class="topbar-right" style="flex-wrap:wrap; gap:8px; justify-content:flex-end;">
     <span style="color:var(--orange);font-size:12px;font-weight:600;">AMMINISTRATORE</span>
-    <a href="furgoni.html" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:8px;font-size:11px;text-decoration:none;font-family:'Inter',sans-serif;white-space:nowrap;">🚐 Revisioni Furgoni</a>
-    <a href="carburante.html" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:8px;font-size:11px;text-decoration:none;font-family:'Inter',sans-serif;white-space:nowrap;">⛽ Carburante</a>
     <button class="btn-logout" onclick="doLogout()">Esci</button>
   </div>
 </div>
@@ -350,64 +127,9 @@
     </div>
   </div>
 
-  <!-- SEZIONE REVISIONI FURGONI -->
-  <div class="card" style="margin-top:10px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-      <div class="card-title" style="margin-bottom:0;">— 🚐 Revisioni Furgoni</div>
-      <a href="furgoni.html" class="btn btn-secondary btn-sm" style="text-decoration:none;">Gestisci →</a>
-    </div>
-    <div id="furgoniPreview">
-      <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Caricamento...</div>
-    </div>
-  </div>
-
-  <!-- SEZIONE DOCUMENTI OPERAI -->
-  <div class="card" style="margin-top:10px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-      <div class="card-title" style="margin-bottom:0;">— 📁 Documenti Operai</div>
-      <span id="docOperaiStats" style="font-size:12px;color:var(--muted);"></span>
-    </div>
-    <div id="docOperaiContainer">
-      <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">
-        <span class="spinner"></span> Caricamento documenti...
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
-
-<!-- ══════════════════════════════════════
-     MODAL BUSTE PAGA
-══════════════════════════════════════ -->
-<div class="modal-overlay" id="modalBuste">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>📎 Buste Paga — <span id="modalBusteNome"></span></h3>
-      <button class="modal-close" onclick="chiudiModalBuste()">✕</button>
-    </div>
-
-    <!-- Upload -->
-    <div class="upload-zone" id="uploadZoneBusta">
-      <input type="file" id="fileBusta" accept="application/pdf" onchange="onFileBustaSelezionato(event)"/>
-      <div class="upload-icon">📄</div>
-      <div class="upload-title">Carica nuova busta paga</div>
-      <div class="upload-sub">Solo PDF · Trascina o clicca</div>
-    </div>
-    <div class="upload-progress" id="uploadProgress">
-      <span class="spinner"></span> Caricamento in corso...
-    </div>
-
-    <!-- Lista buste esistenti -->
-    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">
-      Archivio buste paga
-    </div>
-    <div id="listaBuste">
-      <div class="buste-empty"><span class="spinner"></span></div>
-    </div>
-  </div>
-</div>
 
 <script type="module">
   import { auth, db } from './js/firebase-config.js';
@@ -415,11 +137,8 @@
     onAuthStateChanged, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
-    doc, getDoc, collection, getDocs, addDoc, deleteDoc, serverTimestamp, query, orderBy
+    doc, getDoc, collection, getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import {
-    getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject, listAll
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
                 'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
@@ -430,21 +149,27 @@
   let selectedOperaio = null;
   let selectedDati    = {};
 
-  // Buste paga
-  let busteOperaioUID = null;
-  const storage = getStorage();
-
   // ── AUTH CHECK ──
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'index.html'; return; }
-    const snap = await getDoc(doc(db, 'utenti', user.uid));
-    if (!snap.exists() || snap.data().ruolo !== 'admin') {
-      window.location.href = 'operaio.html'; return;
+    try {
+      const snap = await getDoc(doc(db, 'utenti', user.uid));
+      if (!snap.exists()) {
+        // Nessun profilo → evito il loop: logout e torno al login
+        await signOut(auth);
+        window.location.href = 'index.html';
+        return;
+      }
+      if (snap.data().ruolo !== 'admin') {
+        window.location.href = 'operaio.html'; return;
+      }
+      aggiornaLabel();
+      caricaOperai();
+    } catch(e) {
+      alert('Impossibile leggere il profilo da Firestore (' + (e.code || e.message) + '). Controlla che Firestore sia attivo e le regole pubblicate.');
+      await signOut(auth);
+      window.location.href = 'index.html';
     }
-    aggiornaLabel();
-    caricaOperai();
-    caricaFurgoniPreview();
-    caricaDocumentiOperai();
   });
 
   function aggiornaLabel() {
@@ -515,9 +240,6 @@
           <span style="color:var(--muted);font-size:18px;">›</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <button class="btn-busta-paga" onclick="event.stopPropagation(); apriBuste('${op.uid}', '${(op.nomeCompleto||op.nome+' '+op.cognome).replace(/'/g,"\\'")}')">
-            📎 Buste paga
-          </button>
           <span class="badge ${op.oreMese>0?'badge-green':'badge-orange'}">
             ${op.oreMese>0 ? formatMin(op.oreMese)+' questo mese' : 'nessuna ora'}
           </span>
@@ -584,148 +306,6 @@
     }
   }
 
-  // ══════════════════════════════════════════
-  // BUSTE PAGA
-  // ══════════════════════════════════════════
-
-  window.apriBuste = async function(uid, nome) {
-    busteOperaioUID = uid;
-    document.getElementById('modalBusteNome').textContent = nome;
-    document.getElementById('modalBuste').classList.add('show');
-    document.getElementById('fileBusta').value = '';
-    document.getElementById('uploadProgress').classList.remove('show');
-    await caricaListaBuste(uid);
-  };
-
-  window.chiudiModalBuste = function() {
-    document.getElementById('modalBuste').classList.remove('show');
-    busteOperaioUID = null;
-  };
-
-  async function caricaListaBuste(uid) {
-    const el = document.getElementById('listaBuste');
-    el.innerHTML = '<div class="buste-empty"><span class="spinner"></span></div>';
-
-    try {
-      const snap = await getDocs(
-        query(collection(db, 'utenti', uid, 'bustePaga'), orderBy('caricato', 'desc'))
-      );
-
-      if (snap.empty) {
-        el.innerHTML = '<div class="buste-empty">Nessuna busta paga caricata</div>';
-        return;
-      }
-
-      el.innerHTML = '';
-      snap.forEach(d => {
-        const b = d.data();
-        const data = b.caricato?.toDate ? b.caricato.toDate().toLocaleDateString('it-IT') : '—';
-        const div = document.createElement('div');
-        div.className = 'busta-item';
-        div.innerHTML = `
-          <div class="busta-info">
-            <div class="busta-nome">📄 ${b.nome}</div>
-            <div class="busta-meta">Caricata il ${data} · ${formatBytes(b.dimensione || 0)}</div>
-          </div>
-          <div class="busta-actions">
-            <button class="btn-busta" onclick="scaricaBusta('${b.url}', '${b.nome.replace(/'/g,"\\'")}')">⬇ Scarica</button>
-            <button class="btn-busta danger" onclick="eliminaBusta('${d.id}', '${b.storagePath.replace(/'/g,"\\'")}', '${uid}')">🗑</button>
-          </div>
-        `;
-        el.appendChild(div);
-      });
-    } catch(e) {
-      el.innerHTML = `<div class="buste-empty" style="color:#ff3d3d;">Errore caricamento: ${e.message}</div>`;
-    }
-  }
-
-  window.onFileBustaSelezionato = async function(e) {
-    const file = e.target.files[0];
-    if (!file || !busteOperaioUID) return;
-    if (file.type !== 'application/pdf') { showToast('Solo file PDF!', true); return; }
-    if (file.size > 10 * 1024 * 1024) { showToast('File troppo grande (max 10MB)', true); return; }
-
-    const progress = document.getElementById('uploadProgress');
-    const zone = document.getElementById('uploadZoneBusta');
-    progress.classList.add('show');
-    zone.style.pointerEvents = 'none';
-    zone.style.opacity = '0.5';
-
-    try {
-      // Path: buste-paga/{uid}/{timestamp}_{nomefile}
-      const timestamp = Date.now();
-      const storagePath = `buste-paga/${busteOperaioUID}/${timestamp}_${file.name}`;
-      const storageRef = sRef(storage, storagePath);
-
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      await new Promise((resolve, reject) => {
-        uploadTask.on('state_changed',
-          (snapshot) => {
-            const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            progress.innerHTML = `<span class="spinner"></span> Caricamento ${pct}%...`;
-          },
-          reject,
-          resolve
-        );
-      });
-
-      const url = await getDownloadURL(storageRef);
-
-      // Salva metadati su Firestore
-      await addDoc(collection(db, 'utenti', busteOperaioUID, 'bustePaga'), {
-        nome: file.name,
-        url,
-        storagePath,
-        dimensione: file.size,
-        caricato: serverTimestamp()
-      });
-
-      showToast('✓ Busta paga caricata!');
-      document.getElementById('fileBusta').value = '';
-      await caricaListaBuste(busteOperaioUID);
-
-    } catch(err) {
-      showToast('Errore upload: ' + err.message, true);
-    } finally {
-      progress.classList.remove('show');
-      zone.style.pointerEvents = '';
-      zone.style.opacity = '';
-    }
-  };
-
-  window.scaricaBusta = function(url, nome) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = nome;
-    a.target = '_blank';
-    a.click();
-  };
-
-  window.eliminaBusta = async function(docId, storagePath, uid) {
-    if (!confirm('Eliminare questa busta paga? L\'operazione non è reversibile.')) return;
-    try {
-      // Elimina da Storage
-      await deleteObject(sRef(storage, storagePath));
-      // Elimina da Firestore
-      await deleteDoc(doc(db, 'utenti', uid, 'bustePaga', docId));
-      showToast('✓ Busta eliminata');
-      await caricaListaBuste(uid);
-    } catch(err) {
-      showToast('Errore eliminazione: ' + err.message, true);
-    }
-  };
-
-  function formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B','KB','MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  }
-
-  // ══════════════════════════════════════════
-
   // ── PDF TUTTI GLI OPERAI ──
   window.scaricaPDFTutti = async function() {
     const lista = window._operaiConOre;
@@ -744,9 +324,9 @@
     function disegnaOperaio(op, datiGiorni, primiDati) {
       if (!primiDati) doc2.addPage();
       doc2.setFillColor(15,15,15); doc2.rect(0,0,W,28,'F');
-      doc2.setFillColor(255,106,0); doc2.rect(0,0,W,4,'F');
-      doc2.setTextColor(255,106,0); doc2.setFontSize(18); doc2.setFont('helvetica','bold');
-      doc2.text('GAMA SERVICE', mg, 18);
+      doc2.setFillColor(48,171,88); doc2.rect(0,0,W,4,'F');
+      doc2.setTextColor(48,171,88); doc2.setFontSize(18); doc2.setFont('helvetica','bold');
+      doc2.text('T.G.I COMO', mg, 18);
       doc2.setTextColor(180,180,180); doc2.setFontSize(9); doc2.setFont('helvetica','normal');
       doc2.text(`Registro Ore – ${MESI[viewMonth]} ${viewYear}`, W-mg, 18, {align:'right'});
       doc2.setFillColor(30,30,30); doc2.rect(mg,32,W-mg*2,12,'F');
@@ -772,17 +352,17 @@
         doc2.text(nomeG, xs[0], y); doc2.text(r.partenza||'-', xs[1], y);
         doc2.text(r.fine||'-', xs[2], y); doc2.text(r.pausa ? r.pausa+'m':'-', xs[3], y);
         doc2.setTextColor(200,160,60); doc2.text(r.straordinario||'-', xs[4], y);
-        doc2.setTextColor(255,106,0); doc2.setFont('helvetica','bold'); doc2.text(r.totale||'-', xs[5], y);
+        doc2.setTextColor(48,171,88); doc2.setFont('helvetica','bold'); doc2.text(r.totale||'-', xs[5], y);
         doc2.setTextColor(150,150,150); doc2.setFont('helvetica','normal'); doc2.setFontSize(7.5);
         if (r.note) doc2.text(r.note.substring(0,22), xs[6], y);
         totMins += totaleToMin(r.totale); y += 8; riga++;
       }
       y += 4;
-      doc2.setFillColor(255,106,0); doc2.rect(mg,y-5,W-mg*2,10,'F');
+      doc2.setFillColor(48,171,88); doc2.rect(mg,y-5,W-mg*2,10,'F');
       doc2.setTextColor(0,0,0); doc2.setFontSize(10); doc2.setFont('helvetica','bold');
       doc2.text('TOTALE MESE', mg+2, y+0.5); doc2.text(formatMin(totMins), W-mg-2, y+0.5, {align:'right'});
       doc2.setTextColor(80,80,80); doc2.setFontSize(7); doc2.setFont('helvetica','normal');
-      doc2.text(`Generato il ${new Date().toLocaleDateString('it-IT')} – Gama Service`, W/2, 290, {align:'center'});
+      doc2.text(`Generato il ${new Date().toLocaleDateString('it-IT')} – T.G.I COMO`, W/2, 290, {align:'center'});
     }
 
     let primo = true;
@@ -806,9 +386,9 @@
     const doc2 = new jsPDF();
     const W = 210, mg = 14;
     doc2.setFillColor(15,15,15); doc2.rect(0,0,W,28,'F');
-    doc2.setFillColor(255,106,0); doc2.rect(0,0,W,4,'F');
-    doc2.setTextColor(255,106,0); doc2.setFontSize(18); doc2.setFont('helvetica','bold');
-    doc2.text('GAMA SERVICE', mg, 18);
+    doc2.setFillColor(48,171,88); doc2.rect(0,0,W,4,'F');
+    doc2.setTextColor(48,171,88); doc2.setFontSize(18); doc2.setFont('helvetica','bold');
+    doc2.text('T.G.I COMO', mg, 18);
     doc2.setTextColor(180,180,180); doc2.setFontSize(9); doc2.setFont('helvetica','normal');
     doc2.text(`Registro Ore – ${MESI[viewMonth]} ${viewYear}`, W-mg, 18, {align:'right'});
     doc2.setFillColor(30,30,30); doc2.rect(mg,32,W-mg*2,12,'F');
@@ -836,17 +416,17 @@
       doc2.text(nomeG,xs[0],y); doc2.text(r.partenza||'-',xs[1],y); doc2.text(r.fine||'-',xs[2],y);
       doc2.text(r.pausa?r.pausa+'m':'-',xs[3],y);
       doc2.setTextColor(200,160,60); doc2.text(r.straordinario||'-',xs[4],y);
-      doc2.setTextColor(255,106,0);doc2.setFont('helvetica','bold'); doc2.text(r.totale||'-',xs[5],y);
+      doc2.setTextColor(48,171,88);doc2.setFont('helvetica','bold'); doc2.text(r.totale||'-',xs[5],y);
       doc2.setTextColor(150,150,150);doc2.setFont('helvetica','normal');doc2.setFontSize(7.5);
       if(r.note)doc2.text(r.note.substring(0,22),xs[6],y);
       totMins+=totaleToMin(r.totale); y+=8;riga++;
     }
     y+=4;
-    doc2.setFillColor(255,106,0);doc2.rect(mg,y-5,W-mg*2,10,'F');
+    doc2.setFillColor(48,171,88);doc2.rect(mg,y-5,W-mg*2,10,'F');
     doc2.setTextColor(0,0,0);doc2.setFontSize(10);doc2.setFont('helvetica','bold');
     doc2.text('TOTALE MESE',mg+2,y+0.5); doc2.text(formatMin(totMins),W-mg-2,y+0.5,{align:'right'});
     doc2.setTextColor(80,80,80);doc2.setFontSize(7);doc2.setFont('helvetica','normal');
-    doc2.text(`Generato il ${new Date().toLocaleDateString('it-IT')} – Gama Service`,W/2,290,{align:'center'});
+    doc2.text(`Generato il ${new Date().toLocaleDateString('it-IT')} – T.G.I COMO`,W/2,290,{align:'center'});
     const cognome = selectedOperaio.cognome || selectedOperaio.nomeCompleto;
     doc2.save(`ore_${cognome}_${MESI[viewMonth]}_${viewYear}.pdf`);
     showToast('✓ PDF scaricato!');
@@ -866,203 +446,7 @@
     return m>0?`${h}h ${m}m`:`${h}h`;
   }
 
-  // ── FURGONI PREVIEW ──
-  async function caricaFurgoniPreview() {
-    const el   = document.getElementById('furgoniPreview');
-    const snap = await getDocs(collection(db, 'furgoni'));
-    const oggi = new Date(); oggi.setHours(0,0,0,0);
-    if (snap.empty) {
-      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Nessun furgone registrato. <a href="furgoni.html" style="color:var(--orange);">Aggiungi →</a></div>';
-      return;
-    }
-    let rows = '';
-    snap.forEach(d => {
-      const f = d.data();
-      const sc = new Date(f.scadenza); sc.setHours(0,0,0,0);
-      const giorni = Math.round((sc - oggi) / 86400000);
-      const dataFmt = sc.toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
-      let colore, badge;
-      if (giorni < 0)        { colore = '#ff3d3d'; badge = `SCADUTA da ${Math.abs(giorni)}gg`; }
-      else if (giorni <= 30) { colore = '#ffaa00'; badge = giorni === 0 ? 'OGGI' : `${giorni}gg`; }
-      else                   { colore = '#00c853'; badge = `${giorni}gg`; }
-      rows += `<tr>
-        <td style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--orange);">${f.targa}</td>
-        <td>${f.modello || '—'}</td><td>${dataFmt}</td>
-        <td><span style="background:${colore}22;color:${colore};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">${badge}</span></td>
-      </tr>`;
-    });
-    el.innerHTML = `<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Targa</th><th>Modello</th><th>Scadenza revisione</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  }
-
   // ── LOGOUT ──
-  // ── DOCUMENTI OPERAI ──────────────────────────────────────
-
-const ETICHETTE_CAT = {
-  'Documenti_Identita':          '🪪 Documenti Identità',
-  'Idoneita_Sanitaria':          '🩺 Idoneità Sanitaria',
-  'Formazione_Generale':         '📚 Formazione Generale',
-  'Formazione_PES-PAV':          '⚡ Formazione PES-PAV',
-  'Formazione_PLE':              '🏗 Formazione PLE',
-  'Formazione_Antincendio':      '🔥 Formazione Antincendio',
-  'Formazione_Preposto':         '👷 Formazione Preposto',
-  'Formazione_Gru':              '🏗 Formazione Gru',
-  'Formazione_Escavatore':       '🚜 Formazione Escavatore',
-  'Formazione_Primo_Soccorso':   '🏥 Primo Soccorso',
-  'Formazione_Spazi_Confinanti': '🔒 Spazi Confinanti',
-  'Formazione_DPI_Lavori_Quota': '🪜 DPI Lavori in Quota',
-  'UNILAV_Assunzione':           '📋 UNILAV Assunzione',
-  'Verbale_DPI':                 '🧤 Verbale DPI',
-  'F_GAS':                       '❄️ F-GAS',
-  'F_GAS_Strumenti':             '🔧 F-GAS Strumenti',
-  'Tesserino':                   '🪪 Tesserino',
-  'Idoneita_Generica':           '🩺 Idoneità Generica',
-};
-
-const ORDINE_CAT = [
-  'Documenti_Identita','Tesserino','Idoneita_Sanitaria',
-  'UNILAV_Assunzione','Verbale_DPI',
-  'Formazione_Generale','Formazione_PES-PAV','Formazione_PLE',
-  'Formazione_Antincendio','Formazione_Preposto','Formazione_Gru',
-  'Formazione_Escavatore','Formazione_Primo_Soccorso',
-  'Formazione_Spazi_Confinanti','Formazione_DPI_Lavori_Quota',
-  'F_GAS','F_GAS_Strumenti','Idoneita_Generica'
-];
-
-async function caricaDocumentiOperai() {
-  const container = document.getElementById('docOperaiContainer');
-  const stats     = document.getElementById('docOperaiStats');
-
-  try {
-    // Carica tutti i documenti per operaio
-    const operaiSnap = await getDocs(collection(db, 'documenti_operai'));
-
-    if (operaiSnap.empty) {
-      container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">
-        Nessun documento caricato ancora.<br>
-        <span style="font-size:11px;">Esegui lo script Python per caricare i documenti.</span>
-      </div>`;
-      return;
-    }
-
-    let totaleDoc = 0;
-    let html = '';
-
-    // Per ogni operaio
-    const operaiList = operaiSnap.docs.map(d => d.id).sort();
-
-    for (const operaioId of operaiList) {
-      // Carica tutte le categorie
-      const catDocs = {};
-      let countOperaio = 0;
-
-      for (const cat of ORDINE_CAT) {
-        const catSnap = await getDocs(
-          collection(db, 'documenti_operai', operaioId, cat)
-        );
-        if (!catSnap.empty) {
-          catDocs[cat] = catSnap.docs.map(d => d.data());
-          countOperaio += catSnap.docs.length;
-        }
-      }
-
-      if (countOperaio === 0) continue;
-      totaleDoc += countOperaio;
-
-      const nomeLeggibile = operaioId.replace(/_/g, ' ');
-
-      // Costruisci HTML categorie
-      let catHtml = '';
-      for (const cat of ORDINE_CAT) {
-        if (!catDocs[cat]) continue;
-        const etichetta = ETICHETTE_CAT[cat] || cat;
-        catHtml += `<div class="doc-categoria-titolo">${etichetta}</div>`;
-
-        for (const doc of catDocs[cat]) {
-          const isTesserino = cat === 'Tesserino';
-          const isImmagine  = doc.nome && /\.(png|jpg|jpeg)$/i.test(doc.nome);
-
-          if (isTesserino && isImmagine) {
-            catHtml += `
-              <div class="doc-file-item" style="flex-direction:column;align-items:flex-start;">
-                <img src="${doc.url}" class="doc-tesserino-img" alt="Tesserino ${nomeLeggibile}"/>
-              </div>`;
-          } else {
-            catHtml += `
-              <div class="doc-file-item">
-                <span style="font-size:16px;">${isImmagine ? '🖼' : '📄'}</span>
-                <span class="doc-file-nome" title="${doc.nome}">${doc.nome}</span>
-                <button class="doc-file-btn" onclick="apriDocumento('${doc.url}', '${doc.nome.replace(/'/g,"\'")}')">
-                  👁 Visualizza
-                </button>
-              </div>`;
-          }
-        }
-      }
-
-      html += `
-        <div class="doc-operaio-card" id="doc-card-${operaioId}">
-          <div class="doc-operaio-header" onclick="toggleDocOperaio('${operaioId}')">
-            <div class="doc-operaio-nome">👤 ${nomeLeggibile}</div>
-            <span class="doc-operaio-count">${countOperaio} documenti</span>
-            <span class="doc-operaio-arrow">›</span>
-          </div>
-          <div class="doc-operaio-body">
-            ${catHtml}
-          </div>
-        </div>`;
-    }
-
-    container.innerHTML = html || '<div style="padding:20px;color:var(--muted);text-align:center;">Nessun documento trovato.</div>';
-    stats.textContent = `${operaiList.length} operai · ${totaleDoc} documenti totali`;
-
-  } catch(e) {
-    container.innerHTML = `<div style="padding:16px;color:var(--red);font-size:13px;">Errore caricamento documenti: ${e.message}</div>`;
-    console.error(e);
-  }
-}
-
-window.toggleDocOperaio = function(operaioId) {
-  const card = document.getElementById(`doc-card-${operaioId}`);
-  card.classList.toggle('aperto');
-};
-
-window.apriDocumento = function(url, nome) {
-  // Apre il documento in un overlay modale
-  const modal = document.createElement('div');
-  modal.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.85);
-    z-index:9999;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;padding:16px;`;
-
-  const isImmagine = /\.(png|jpg|jpeg)$/i.test(nome);
-
-  modal.innerHTML = `
-    <div style="background:#1e1e1e;border-radius:12px;width:100%;max-width:900px;
-      height:90vh;display:flex;flex-direction:column;overflow:hidden;
-      border:1px solid rgba(255,106,0,0.3);">
-      <div style="display:flex;align-items:center;justify-content:space-between;
-        padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.1);background:#111;">
-        <span style="color:#fff;font-weight:600;font-size:13px;">📄 ${nome}</span>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <a href="${url}" download="${nome}" style="color:var(--orange);font-size:12px;
-            text-decoration:none;border:1px solid rgba(255,106,0,0.4);
-            padding:5px 12px;border-radius:6px;">⬇ Scarica</a>
-          <button onclick="this.closest('div[style*=fixed]').remove()"
-            style="background:none;border:none;color:#aaa;font-size:22px;cursor:pointer;">✕</button>
-        </div>
-      </div>
-      ${isImmagine
-        ? `<img src="${url}" style="flex:1;object-fit:contain;max-height:100%;padding:10px;" />`
-        : `<iframe src="${/iPhone|iPad|Android/i.test(navigator.userAgent)
-            ? 'https://docs.google.com/viewer?url='+encodeURIComponent(url)+'&embedded=true'
-            : url}" style="flex:1;border:none;width:100%;background:#fff;"></iframe>`
-      }
-    </div>`;
-
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  document.body.appendChild(modal);
-};
-
 // ── LOGOUT ────────────────────────────────────────────
 window.doLogout = async function() {
     await signOut(auth);
@@ -1078,5 +462,6 @@ window.doLogout = async function() {
 </script>
 
 <script src="js/pwa-install.js"></script>
+
 </body>
 </html>

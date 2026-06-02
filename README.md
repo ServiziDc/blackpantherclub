@@ -1,75 +1,66 @@
-# Gama Service – Registro Ore Lavoro
+# T.G.I COMO – Registro Ore Lavoro
 
-## Struttura file
-```
-gama-service/
-├── index.html          ← Pagina login (entry point)
-├── registrati.html     ← Registrazione operai
-├── operaio.html        ← Dashboard operaio
-├── admin.html          ← Pannello amministratore
-├── setup.html          ← ⚠️ Esegui UNA VOLTA poi elimina
-├── css/
-│   └── style.css
-└── js/
-    └── firebase-config.js
-```
+App web (PWA) per la gestione delle ore di lavoro dei tecnici di **T.G.I COMO – Tank Gauging Italia**.
 
-## Istruzioni setup (prima volta)
-
-### 1. Carica su GitHub
-- Crea repository su GitHub (es. `gama-service-ore`)
-- Carica tutti i file
-- Vai su Settings → Pages → Source: `main` branch → `/root`
-- GitHub ti darà un URL tipo: `https://tuonome.github.io/gama-service-ore/`
-
-### 2. Crea l'admin
-- Apri nel browser: `https://tuonome.github.io/gama-service-ore/setup.html`
-- Clicca "Crea Admin GamaService"
-- Fatto! Poi **elimina setup.html** dal repository
-
-### 3. Accesso
-- **Admin** → Username: `GamaService` | Password: `GamaService@2026`
-- **Operai** → Si registrano su `registrati.html` con email e password
-
-### 4. Regole Firestore (dopo il test)
-Vai su Firebase Console → Firestore → Regole e incolla:
+## Struttura
 
 ```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Operaio vede solo i propri dati
-    match /utenti/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-      match /mesi/{mese} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
-      }
-    }
-    // Admin vede tutti
-    match /utenti/{uid} {
-      allow read: if request.auth != null && 
-        get(/databases/$(database)/documents/utenti/$(request.auth.uid)).data.ruolo == 'admin';
-      match /mesi/{mese} {
-        allow read: if request.auth != null && 
-          get(/databases/$(database)/documents/utenti/$(request.auth.uid)).data.ruolo == 'admin';
-      }
-    }
-  }
-}
+tgi-como/
+├── index.html              # Login
+├── registrati.html         # Registrazione nuovo tecnico
+├── recupera-password.html  # Recupero password
+├── operaio.html            # Area tecnico: inserimento ore
+├── admin.html              # Area admin: ore di tutti i tecnici
+├── setup.html              # Creazione account admin (eseguire UNA volta, poi eliminare)
+├── manifest.json
+├── sw.js
+├── firestore.rules         # Regole di sicurezza Firestore (da incollare in Firebase)
+├── css/style.css
+├── js/firebase-config.js   # Configurazione Firebase (progetto tgi-como)
+├── js/pwa-install.js
+└── img/, icon-*.png        # Logo e icone
 ```
 
-## Come funziona
+## Pubblicazione su GitHub Pages
 
-### Operaio
-1. Si registra con nome, cognome, email, password
-2. Accede e vede il suo registro ore mensile
-3. Per ogni giorno seleziona: partenza, fine lavoro, pausa pranzo (modificabile), note
-4. Può navigare tra i mesi
-5. Può scaricare il PDF del mese
+1. Carica tutti i file nel repository.
+2. Settings → Pages → branch `main` / root.
+3. URL tipo: `https://servizidc.github.io/TGI-COMO/`.
 
-### Admin (GamaService)
-1. Accede con username `GamaService` e password
-2. Vede tutti gli operai registrati
-3. Per ogni operaio vede le ore del mese selezionato
-4. Può navigare tra i mesi
-5. Può scaricare il PDF di ogni operaio
+## Firebase (progetto tgi-como) — TUTTO GRATIS
+
+Serve solo il piano gratuito (Spark). NON serve Storage né pagamenti.
+
+1. **Authentication** → abilita **Email/Password**.
+   In Authentication → Settings → Authorized domains aggiungi `servizidc.github.io`.
+2. **Firestore Database** → Create database (regione `europe-west`).
+   Nella scheda **Rules** incolla il contenuto di `firestore.rules` e pubblica.
+
+## Primo avvio: crea l'admin
+
+1. Apri `.../setup.html`
+2. Clicca "Crea Admin T.G.I"
+3. Al termine ELIMINA `setup.html` dal repository.
+
+## Credenziali
+
+- Admin   → Username: `TGI.ITALIA` | Email: `soluzioni@tgiitalia.com` | Password: `TGI2026@`
+- Tecnici → si registrano da soli con la propria email da registrati.html
+
+## Funzioni
+
+### Tecnico (operaio.html)
+- Inserimento ore (inizio, fine, pausa, straordinario, cantiere)
+- Calcolo automatico ore + statistiche mensili
+- Download PDF del mese
+
+### Admin (admin.html)
+- Ore di tutti i tecnici, navigabili per mese
+- Dettaglio per tecnico + PDF
+- PDF cumulativo di tutti i tecnici
+
+## Script Python (caricamento massivo operai)
+
+Credenziali admin da usare nello script `carica_operai.py`:
+- Email:    soluzioni@tgiitalia.com
+- Password: TGI2026@

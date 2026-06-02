@@ -1,29 +1,29 @@
 {
-  "name": "Gama Service",
-  "short_name": "Gama Service",
-  "description": "Registro ore, carburante e revisioni furgoni",
-  "start_url": "/Gestione-ore-gama-service/index.html",
-  "scope": "/Gestione-ore-gama-service/",
+  "name": "T.G.I COMO – Registro Ore",
+  "short_name": "T.G.I COMO",
+  "description": "Registro ore lavoro – Tank Gauging Italia",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0d0d0d",
-  "theme_color": "#ff6a00",
+  "theme_color": "#30AB58",
   "orientation": "portrait-primary",
   "lang": "it",
   "icons": [
     {
-      "src": "/Gestione-ore-gama-service/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Gestione-ore-gama-service/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Gestione-ore-gama-service/apple-touch-icon.png",
+      "src": "./apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png"
     }
