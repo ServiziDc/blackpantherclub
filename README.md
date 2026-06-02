@@ -1,66 +1,116 @@
-# T.G.I COMO – Registro Ore Lavoro
+# 🐆 Black Panther Club - Dance Team Website
 
-App web (PWA) per la gestione delle ore di lavoro dei tecnici di **T.G.I COMO – Tank Gauging Italia**.
+Website showcasing the elite dance teams of Black Panther Club's 3DX Virtual World.
 
-## Struttura
+## 📋 Features
+
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Interactive Cursor**: Custom animated cursor with ring effect
+- **Particle Animation**: Dynamic background particles that respond to mouse movement
+- **Smooth Animations**: Fade-in effects as you scroll
+- **Modern Styling**: Gold and blue themed dark interface with glassmorphism effects
+
+## 🎭 Dance Teams
+
+Our platform showcases 9 exceptional dance teams:
+
+1. **R|D** - Diamond-themed luxury performance team
+2. **Sun & Moon Booties** - Vibrant day and night energy
+3. **Ribbon & Bows** - Elegant pole and aerial dance specialists
+4. **The Lemaire Dancers** - Contemporary blue-themed ensemble
+5. **Sugar & Spice OT** - Heart-centered emotional performers
+6. **[ragebaiti]** - Experimental glitch-style performers
+7. **Polecats** - Silver and sophisticated pole dancers
+8. **Panthrea Euphoria** - Passionate panther-themed dance collective
+9. **Lou's Band** - Romantic heart-pulsing dance sensation
+
+## 📁 Project Structure
 
 ```
-tgi-como/
-├── index.html              # Login
-├── registrati.html         # Registrazione nuovo tecnico
-├── recupera-password.html  # Recupero password
-├── operaio.html            # Area tecnico: inserimento ore
-├── admin.html              # Area admin: ore di tutti i tecnici
-├── setup.html              # Creazione account admin (eseguire UNA volta, poi eliminare)
-├── manifest.json
-├── sw.js
-├── firestore.rules         # Regole di sicurezza Firestore (da incollare in Firebase)
-├── css/style.css
-├── js/firebase-config.js   # Configurazione Firebase (progetto tgi-como)
-├── js/pwa-install.js
-└── img/, icon-*.png        # Logo e icone
+.
+├── danceteam.html       # Main website file
+├── loghi/               # Team logos directory
+│   ├── rd.png
+│   ├── sun-moon-booties.png
+│   ├── ribbon-bows.png
+│   ├── lemaire-dancers.png
+│   ├── sugar-spice.png
+│   ├── ragebaiti.png
+│   ├── polecats.png
+│   ├── panthrea-euphoria.png
+│   └── lous-band.png
+├── lang.js              # Language support (if available)
+├── favicon.ico          # Website icon
+├── favicon.png          # Favicon PNG version
+└── README.md            # This file
 ```
 
-## Pubblicazione su GitHub Pages
+## 🚀 Quick Start
 
-1. Carica tutti i file nel repository.
-2. Settings → Pages → branch `main` / root.
-3. URL tipo: `https://servizidc.github.io/TGI-COMO/`.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/BlackPantherClub-DanceTeam.git
+   cd BlackPantherClub-DanceTeam
+   ```
 
-## Firebase (progetto tgi-como) — TUTTO GRATIS
+2. **Open in browser:**
+   - Simply open `danceteam.html` in your web browser
+   - Or serve via local HTTP server for best results
 
-Serve solo il piano gratuito (Spark). NON serve Storage né pagamenti.
+3. **Deploy to GitHub Pages:**
+   - Push to main branch
+   - Enable GitHub Pages in repository settings
+   - Site will be live at `https://yourusername.github.io/BlackPantherClub-DanceTeam/`
 
-1. **Authentication** → abilita **Email/Password**.
-   In Authentication → Settings → Authorized domains aggiungi `servizidc.github.io`.
-2. **Firestore Database** → Create database (regione `europe-west`).
-   Nella scheda **Rules** incolla il contenuto di `firestore.rules` e pubblica.
+## 🎨 Customization
 
-## Primo avvio: crea l'admin
+### Colors
+Edit the CSS variables in the `<style>` section:
+```css
+:root {
+  --deep:#04030a;           /* Dark background */
+  --gold:#c9952a;           /* Primary accent color */
+  --gold-light:#f0c060;     /* Light accent */
+  --blue-glow:#3b00cc;      /* Secondary accent */
+  --white:#e8e8f0;          /* Text color */
+  --panel:rgba(8,5,20,0.88) /* Card background */
+}
+```
 
-1. Apri `.../setup.html`
-2. Clicca "Crea Admin T.G.I"
-3. Al termine ELIMINA `setup.html` dal repository.
+### Adding New Teams
+1. Add the team logo to `/loghi/` folder
+2. Add a new card in the `.team-grid` section:
+```html
+<div class="team-card fade-in">
+  <img src="loghi/your-team.png" alt="Team Name">
+  <h3>Team Name</h3>
+</div>
+```
 
-## Credenziali
+## 🔧 Technologies Used
 
-- Admin   → Username: `TGI.ITALIA` | Email: `soluzioni@tgiitalia.com` | Password: `TGI2026@`
-- Tecnici → si registrano da soli con la propria email da registrati.html
+- **HTML5** - Semantic markup
+- **CSS3** - Modern styling with variables and transitions
+- **JavaScript** - Interactive animations and effects
+- **Canvas API** - Particle system animation
 
-## Funzioni
+## 📱 Browser Compatibility
 
-### Tecnico (operaio.html)
-- Inserimento ore (inizio, fine, pausa, straordinario, cantiere)
-- Calcolo automatico ore + statistiche mensili
-- Download PDF del mese
+- Chrome/Chromium (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
-### Admin (admin.html)
-- Ore di tutti i tecnici, navigabili per mese
-- Dettaglio per tecnico + PDF
-- PDF cumulativo di tutti i tecnici
+## 📄 License
 
-## Script Python (caricamento massivo operai)
+All rights reserved © 2026 Black Panther Club
 
-Credenziali admin da usare nello script `carica_operai.py`:
-- Email:    soluzioni@tgiitalia.com
-- Password: TGI2026@
+## 📧 Contact
+
+For inquiries or collaborations, reach out through the Black Panther Club official channels.
+
+---
+
+**Last Updated:** March 2026  
+**Version:** 1.1  
+**Status:** Active
