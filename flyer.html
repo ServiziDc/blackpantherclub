@@ -257,17 +257,39 @@ function fetchFlyersFromGitHub(apiUrl, container) {
         /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name)
       );
 
-      // Parsing del nome file: YYYY-MM-DD_EVENTO_Nome.{png|jpg|jpeg}
+      // Parsing del nome file.
+      // Vengono accettate due forme, perche' le locandine arrivano sia dal bot
+      // sia caricate a mano dall'interfaccia di GitHub:
+      //
+      //   2026-03-16_EDM_TECHNO_BlackPanther.png   (data, evento, nome)
+      //   2026-03-16_EDM TECHNO.png                (data, evento)
+      //
+      // L'evento puo' contenere spazi, trattini e barre: sono nomi veri di
+      // serate, non codici.
       const flyers = imageFiles.map(file => {
-        // Accetta formato: YYYY-MM-DD_EVENTO_Nome.png oppure YYYY-MM-DD_EVENTO_Nome.jpg
-        const match = file.name.match(/^(\d{4}-\d{2}-\d{2})_([A-Z0-9_-]+)_(.+?)\.(jpg|jpeg|png|gif|webp)$/i);
-        
+        const senzaEstensione = file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, "");
+        const match = senzaEstensione.match(/^(\d{4}-\d{2}-\d{2})[_ -]+(.+)$/);
+
         if (match) {
-          const [, dateStr, evento, nome] = match;
+          const dateStr = match[1];
+          let resto = match[2];
+          let nome = "";
+
+          // Se c'e' un ultimo segmento dopo un underscore, e' il nome del file
+          // prodotto dal bot: lo si separa dall'evento.
+          const ultimo = resto.match(/^(.*)_([^_]+)$/);
+          if (ultimo && /^[A-Za-z0-9]+$/.test(ultimo[2])) {
+            resto = ultimo[1];
+            nome = ultimo[2];
+          }
+
+          // L'evento torna leggibile: "EDM_TECHNO" diventa "EDM TECHNO"
+          const evento = resto.replace(/_/g, " ").trim().toUpperCase();
+
           return {
             url: file.download_url,
-            name: nome,
-            evento: evento,
+            name: nome || evento,
+            evento: evento || "SERATA",
             date: new Date(dateStr),
             dateStr: dateStr
           };
@@ -277,7 +299,7 @@ function fetchFlyersFromGitHub(apiUrl, container) {
         return {
           url: file.download_url,
           name: file.name.replace(/\.\w+$/, ''),
-          evento: "VARIO",
+          evento: "ALTRO",
           date: new Date(0),
           dateStr: "0000-00-00"
         };

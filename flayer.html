@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flayer &mdash; BLACK PANTHER CLUB</title>
+  <title>Flyer &mdash; BLACK PANTHER CLUB</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
@@ -38,7 +38,7 @@
     footer p { font-size:.75rem; letter-spacing:.25em; text-transform:uppercase; opacity:.3; }
     @media(max-width:768px){ nav{padding:14px 20px;} .nav-links{display:none;} .page-wrap{padding:100px 20px 60px;} }
 
-    .flyer-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,220px)); gap:24px; }
+    .flyer-grid { display:flex; flex-wrap:wrap; gap:24px; }
     .flyer-card { width:220px; height:300px; border:1px solid rgba(201,149,42,.3); position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; cursor:pointer; }
     .flyer-card:hover { transform:translateY(-6px); box-shadow:0 30px 60px rgba(0,0,0,.6); }
     .flyer-card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(4,3,10,.9) 0%,rgba(59,0,204,.25) 50%,rgba(201,149,42,.15) 100%); }
@@ -144,7 +144,7 @@
     <li><a href="gallery.html"><span data-i18n="nav_gallery">Foto / Gallery</span></a></li>
     <li><a href="djs.html"><span data-i18n="nav_djs">I Nostri DJ</span></a></li>
     <li><a href="danceteam.html"><span data-i18n="nav_danceteam">Dance Team</span></a></li>
-    <li><a href="flayer.html"><span data-i18n="nav_flayer">Flayer</span></a></li>
+    <li><a href="flyer.html"><span data-i18n="nav_flyer">Flyer</span></a></li>
     <li><a href="partner.html"><span data-i18n="nav_partner">Partner</span></a></li>
     <li><a href="contatti.html"><span data-i18n="nav_contatti">Contatti</span></a></li>
     <li><a href="mymusic.html"><span data-i18n="nav_mymusic">My Music</span></a></li>
@@ -155,11 +155,11 @@
 </nav>
 
 <div class="page-wrap">
-  <p class="section-label" data-i18n="flayer_label">Archivio</p>
-  <h1 class="section-title" data-i18n="flayer_title">Flyer</h1>
+  <p class="section-label" data-i18n="flyer_label">Archivio</p>
+  <h1 class="section-title" data-i18n="flyer_title">Flyer</h1>
   <div class="section-line"></div>
 
-  <div id="flayerContainer" class="flyer-grid"></div>
+  <div id="flyerContainer" class="flyer-grid"></div>
 </div>
 
 <footer>
@@ -218,8 +218,8 @@ lightbox.addEventListener("click", e => { if (e.target === lightbox) closeLightb
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
 
 /* ── LOAD FLYERS FROM GITHUB ── */
-function loadFlayers() {
-  const container = document.getElementById("flayerContainer");
+function loadFlyers() {
+  const container = document.getElementById("flyerContainer");
   if (!container) return;
 
   container.innerHTML = '<p style="color:rgba(232,224,208,.4);letter-spacing:.2em;text-align:center;padding:40px 0;">Caricamento flyer...</p>';
@@ -238,10 +238,10 @@ function loadFlayers() {
 
   const API_URL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}?ref=${GITHUB_BRANCH}`;
 
-  fetchFlayersFromGitHub(API_URL, container);
+  fetchFlyersFromGitHub(API_URL, container);
 }
 
-function fetchFlayersFromGitHub(apiUrl, container) {
+function fetchFlyersFromGitHub(apiUrl, container) {
   fetch(apiUrl)
     .then(res => {
       if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
@@ -257,17 +257,39 @@ function fetchFlayersFromGitHub(apiUrl, container) {
         /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name)
       );
 
-      // Parsing del nome file: YYYY-MM-DD_EVENTO_Nome.{png|jpg|jpeg}
-      const flayers = imageFiles.map(file => {
-        // Accetta formato: YYYY-MM-DD_EVENTO_Nome.png oppure YYYY-MM-DD_EVENTO_Nome.jpg
-        const match = file.name.match(/^(\d{4}-\d{2}-\d{2})_([A-Z0-9_-]+)_(.+?)\.(jpg|jpeg|png|gif|webp)$/i);
-        
+      // Parsing del nome file.
+      // Vengono accettate due forme, perche' le locandine arrivano sia dal bot
+      // sia caricate a mano dall'interfaccia di GitHub:
+      //
+      //   2026-03-16_EDM_TECHNO_BlackPanther.png   (data, evento, nome)
+      //   2026-03-16_EDM TECHNO.png                (data, evento)
+      //
+      // L'evento puo' contenere spazi, trattini e barre: sono nomi veri di
+      // serate, non codici.
+      const flyers = imageFiles.map(file => {
+        const senzaEstensione = file.name.replace(/\.(jpg|jpeg|png|gif|webp)$/i, "");
+        const match = senzaEstensione.match(/^(\d{4}-\d{2}-\d{2})[_ -]+(.+)$/);
+
         if (match) {
-          const [, dateStr, evento, nome] = match;
+          const dateStr = match[1];
+          let resto = match[2];
+          let nome = "";
+
+          // Se c'e' un ultimo segmento dopo un underscore, e' il nome del file
+          // prodotto dal bot: lo si separa dall'evento.
+          const ultimo = resto.match(/^(.*)_([^_]+)$/);
+          if (ultimo && /^[A-Za-z0-9]+$/.test(ultimo[2])) {
+            resto = ultimo[1];
+            nome = ultimo[2];
+          }
+
+          // L'evento torna leggibile: "EDM_TECHNO" diventa "EDM TECHNO"
+          const evento = resto.replace(/_/g, " ").trim().toUpperCase();
+
           return {
             url: file.download_url,
-            name: nome,
-            evento: evento,
+            name: nome || evento,
+            evento: evento || "SERATA",
             date: new Date(dateStr),
             dateStr: dateStr
           };
@@ -277,32 +299,32 @@ function fetchFlayersFromGitHub(apiUrl, container) {
         return {
           url: file.download_url,
           name: file.name.replace(/\.\w+$/, ''),
-          evento: "VARIO",
+          evento: "ALTRO",
           date: new Date(0),
           dateStr: "0000-00-00"
         };
       });
 
       // Ordina per data (più recenti prima)
-      flayers.sort((a, b) => b.date - a.date);
+      flyers.sort((a, b) => b.date - a.date);
 
       // Raggruppa per evento
-      const flayersByEvent = {};
-      flayers.forEach(f => {
-        if (!flayersByEvent[f.evento]) {
-          flayersByEvent[f.evento] = [];
+      const flyersByEvent = {};
+      flyers.forEach(f => {
+        if (!flyersByEvent[f.evento]) {
+          flyersByEvent[f.evento] = [];
         }
-        flayersByEvent[f.evento].push(f);
+        flyersByEvent[f.evento].push(f);
       });
 
       // Ordina eventi per data più recente
-      const sortedEvents = Object.keys(flayersByEvent).sort((a, b) => {
-        const dateA = Math.max(...flayersByEvent[a].map(f => f.date));
-        const dateB = Math.max(...flayersByEvent[b].map(f => f.date));
+      const sortedEvents = Object.keys(flyersByEvent).sort((a, b) => {
+        const dateA = Math.max(...flyersByEvent[a].map(f => f.date));
+        const dateB = Math.max(...flyersByEvent[b].map(f => f.date));
         return dateB - dateA;
       });
 
-      renderFlayersByEvent(flayersByEvent, sortedEvents, container);
+      renderFlyersByEvent(flyersByEvent, sortedEvents, container);
     })
     .catch(err => {
       console.error("Errore caricamento flyer:", err);
@@ -310,7 +332,7 @@ function fetchFlayersFromGitHub(apiUrl, container) {
     });
 }
 
-function renderFlayersByEvent(flayersByEvent, sortedEvents, container) {
+function renderFlyersByEvent(flyersByEvent, sortedEvents, container) {
   container.innerHTML = "";
 
   if (sortedEvents.length === 0) {
@@ -319,7 +341,7 @@ function renderFlayersByEvent(flayersByEvent, sortedEvents, container) {
   }
 
   sortedEvents.forEach(evento => {
-    const eventFlayers = flayersByEvent[evento];
+    const eventFlyers = flyersByEvent[evento];
     
     // Sezione evento
     const eventSection = document.createElement("div");
@@ -341,14 +363,14 @@ function renderFlayersByEvent(flayersByEvent, sortedEvents, container) {
     eventTitle.textContent = evento;
     eventSection.appendChild(eventTitle);
     
-    // Griglia flayer per questo evento
+    // Griglia flyer per questo evento
     const grid = document.createElement("div");
     grid.className = "flyer-grid";
     
     // Ordina per data decrescente (più recenti prima)
-    eventFlayers.sort((a, b) => b.date - a.date);
+    eventFlyers.sort((a, b) => b.date - a.date);
     
-    eventFlayers.forEach(item => {
+    eventFlyers.forEach(item => {
       const card = document.createElement("div");
       card.className = "flyer-card fade-in";
 
@@ -382,7 +404,7 @@ function renderFlayersByEvent(flayersByEvent, sortedEvents, container) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", loadFlayers);
+document.addEventListener("DOMContentLoaded", loadFlyers);
 </script>
 
 </body>
